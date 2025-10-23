@@ -1,38 +1,51 @@
 /**
  * Next.js Middleware
- * Protects routes and handles authentication
+ * Protects routes and handles authentication (NextAuth v4)
  */
 
-import { auth } from '@/lib/auth';
+import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
-  const isLoggedIn = !!req.auth;
+export default withAuth(
+  function middleware(req) {
+    const { pathname } = req.nextUrl;
+    const isLoggedIn = !!req.nextauth.token;
 
-  // Public routes (accessible without authentication)
-  const publicRoutes = ['/', '/login', '/signup', '/api/auth'];
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
+    // Redirect to dashboard if accessing login/signup while already authenticated
+    if ((pathname === '/login' || pathname === '/signup') && isLoggedIn) {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
 
-  // Protected routes (require authentication)
-  const protectedRoutes = ['/dashboard', '/editor', '/projects', '/settings'];
-  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ req, token }) => {
+        const { pathname } = req.nextUrl;
 
-  // Redirect to login if accessing protected route without auth
-  if (isProtectedRoute && !isLoggedIn) {
-    const loginUrl = new URL('/login', req.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
+        // Public routes (accessible without authentication)
+        const publicRoutes = ['/', '/login', '/signup'];
+        if (publicRoutes.includes(pathname) || pathname.startsWith('/api/auth')) {
+          return true;
+        }
+
+        // Protected routes (require authentication)
+        const protectedRoutes = ['/dashboard', '/editor', '/projects', '/settings'];
+        const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
+
+        if (isProtectedRoute) {
+          return !!token; // Must be logged in
+        }
+
+        return true; // Allow all other routes
+      },
+    },
+    pages: {
+      signIn: '/login',
+    },
   }
-
-  // Redirect to dashboard if accessing login/signup while already authenticated
-  if ((pathname === '/login' || pathname === '/signup') && isLoggedIn) {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
-  }
-
-  return NextResponse.next();
-});
+);
 
 export const config = {
-  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

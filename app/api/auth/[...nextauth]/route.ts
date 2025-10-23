@@ -1,7 +1,10 @@
 /**
- * NextAuth.js API Route Handler
+ * NextAuth.js API Route Handler (v4)
  */
 
-import { handlers } from '@/lib/auth';
+import NextAuth from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
-export const { GET, POST } = handlers;
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };

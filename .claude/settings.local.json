@@ -11,7 +11,8 @@
       "Bash(npx shadcn@latest init:*)",
       "Bash(npx shadcn@latest add button input label card form separator dialog dropdown-menu tabs tooltip select -y)",
       "Bash(pnpm dev)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

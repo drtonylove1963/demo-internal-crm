@@ -1,27 +1,27 @@
 /**
- * NextAuth.js Configuration
+ * NextAuth.js Configuration (v4)
  * Authentication setup with multiple providers
  */
 
-import NextAuth from 'next-auth';
-import { PrismaAdapter } from '@auth/prisma-adapter';
+import type { NextAuthOptions } from 'next-auth';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   session: { strategy: 'jwt' },
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
     }),
     GitHubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
+      clientId: process.env.GITHUB_ID || '',
+      clientSecret: process.env.GITHUB_SECRET || '',
     }),
     CredentialsProvider({
       name: 'credentials',
@@ -35,7 +35,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         const user = await db.user.findUnique({
-          where: { email: credentials.email as string },
+          where: { email: credentials.email },
         });
 
         if (!user || !user.password) {
@@ -43,7 +43,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         const isValid = await bcrypt.compare(
-          credentials.password as string,
+          credentials.password,
           user.password
         );
 
@@ -53,7 +53,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         return {
           id: user.id,
-          email: user.email,
+          email: user.email!,
           name: user.name,
           image: user.image,
           role: user.role,
@@ -79,8 +79,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   pages: {
     signIn: '/login',
-    signOut: '/login',
     error: '/login',
-    newUser: '/dashboard',
   },
-});
+};
