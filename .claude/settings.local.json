@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd BMad framework and Claude agent configuration\n\n- Add BMad core framework with agents (analyst, architect, dev, pm, po, qa, sm, ux-expert)\n- Add agent teams configurations (fullstack, minimal, no-ui, all)\n- Add project management checklists and templates\n- Add workflow definitions for greenfield and brownfield projects\n- Configure Claude Code commands and local settings\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(find:*)",
+      "Bash(pnpm add:*)",
+      "Bash(npx prisma:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nComplete Sprint 1 Day 1 - Foundation & Project Setup\n\nMajor Changes:\n- Install all core dependencies (DnD kit, Prisma, NextAuth, Zustand, React Query, etc.)\n- Set up complete project folder structure (components, lib, types, prisma)\n- Create comprehensive Prisma database schema with all models\n- Configure NextAuth.js with multiple auth providers (email, Google, GitHub)\n- Implement Zustand stores for canvas and UI state management\n- Set up TanStack React Query with providers\n- Create middleware for route protection\n- Define TypeScript types for elements and design system\n- Generate Prisma Client\n- Update README with complete setup instructions\n\nNew Files:\n- prisma/schema.prisma - Complete database schema (User, Project, Page, Component, MediaFile)\n- lib/auth.ts - NextAuth configuration\n- lib/db.ts - Prisma client singleton\n- lib/utils.ts - Utility functions (cn, slugify, etc.)\n- lib/stores/canvas-store.ts - Canvas state management with undo/redo\n- lib/stores/ui-store.ts - UI state management\n- types/element.ts - Element type definitions\n- types/next-auth.d.ts - NextAuth type extensions\n- components/providers.tsx - React Query + Session providers\n- middleware.ts - Route protection middleware\n- .env + .env.example - Environment variable templates\n\nUpdated Files:\n- app/layout.tsx - Add providers and update metadata\n- README.md - Complete developer documentation\n- package.json - All dependencies installed\n\nSprint 1 Day 1 Status: ✅ Complete\nNext: Day 2 - Authentication pages (login/signup)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
